@@ -1,14 +1,14 @@
-import React from "react";
 import Cell from "./Cell";
 import type { t_cell } from "../minesweeper";
 
 interface BoardProps {
-  board: t_cell[][];
-  onClick: (x: number, y: number) => void;
-  onRightClick: (x: number, y: number) => void;
+    board: t_cell[][];
+    onClick: (x: number, y: number) => void;
+    onRightClick: (x: number, y: number) => void;
 }
 
-const Board: React.FC<BoardProps> = ({ board, onClick, onRightClick }) => {
+const Board = ({ board, onClick, onRightClick }: BoardProps) => {
+
     return (
         <div className="flex flex-col">
             {board.map((row, rowIndex) => (

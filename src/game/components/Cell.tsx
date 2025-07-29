@@ -1,4 +1,3 @@
-import React from "react";
 import type { t_cell } from "../minesweeper";
 import { icon } from "../minesweeper";
 
@@ -8,7 +7,7 @@ type CellProps = {
     onRightClick: (x: number, y: number) => void;
 };
 
-const Cell: React.FC<CellProps> = ({ cell, onClick, onRightClick }) => {
+const Cell = ({ cell, onClick, onRightClick }: CellProps) => {
     const { x, y, isRevealed, isBomb, adjacentBombs, isFlagged } = cell;
 
     let display = '';
