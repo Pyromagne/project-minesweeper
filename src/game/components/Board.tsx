@@ -10,7 +10,7 @@ interface BoardProps {
 const Board = ({ board, onClick, onRightClick }: BoardProps) => {
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col border">
             {board.map((row, rowIndex) => (
                 <div key={rowIndex} className="flex">
                     {row.map(cell => (

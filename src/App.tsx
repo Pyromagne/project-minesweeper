@@ -71,13 +71,19 @@ const App = () => {
 
   const handleClick = (x: number, y: number) => {
     if (gameOver || gameWon) return;
+
     const updatedBoard = board.map(row => row.map(cell => ({ ...cell })));
     const result = revealCell(updatedBoard, x, y);
+
     setBoard(result.board);
+
     if (result.gameOver) {
       setGameOver(true);
+    } else {
+      checkWin(result.board);
     }
   };
+
 
   const handleRightClick = (x: number, y: number) => {
     if (gameOver || gameWon) return;
@@ -108,7 +114,7 @@ const App = () => {
 
       {gameOver && <div className="text-red-600 font-semibold">Game Over 💥</div>}
       {gameWon && <div className="text-green-600 font-semibold">You Win! 🎉</div>}
-      
+
       <button
         className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         onClick={resetGame}

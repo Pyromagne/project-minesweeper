@@ -8,8 +8,8 @@ export type t_cell = {
 };
 
 export const boardSize = {
-    width: 14,
-    length: 14
+    width: 10,
+    length: 10
 };
 
 export const icon = {
@@ -17,4 +17,4 @@ export const icon = {
     bomb: '💣'
 }
 
-export const bombCount: number = 20;
+export const bombCount: number = 10;
