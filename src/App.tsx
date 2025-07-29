@@ -69,7 +69,7 @@ const App = () => {
     setGameWon(false);
   };
 
-  const handleClick = (x: number, y: number) => {
+  const handleLeftClick = (x: number, y: number) => {
     if (gameOver || gameWon) return;
 
     const updatedBoard = board.map(row => row.map(cell => ({ ...cell })));
@@ -110,7 +110,7 @@ const App = () => {
     <main className="p-4 flex flex-col items-center gap-4">
       <h1 className="text-2xl font-bold">Minesweeper</h1>
 
-      <Board board={board} onClick={handleClick} onRightClick={handleRightClick} />
+      <Board board={board} onLeftClick={handleLeftClick} onRightClick={handleRightClick} />
 
       {gameOver && <div className="text-red-600 font-semibold">Game Over 💥</div>}
       {gameWon && <div className="text-green-600 font-semibold">You Win! 🎉</div>}

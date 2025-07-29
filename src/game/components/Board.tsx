@@ -3,11 +3,11 @@ import type { t_cell } from "../minesweeper";
 
 interface BoardProps {
     board: t_cell[][];
-    onClick: (x: number, y: number) => void;
+    onLeftClick: (x: number, y: number) => void;
     onRightClick: (x: number, y: number) => void;
 }
 
-const Board = ({ board, onClick, onRightClick }: BoardProps) => {
+const Board = ({ board, onLeftClick, onRightClick }: BoardProps) => {
 
     return (
         <div className="flex flex-col border">
@@ -17,7 +17,7 @@ const Board = ({ board, onClick, onRightClick }: BoardProps) => {
                         <Cell
                             key={`${cell.x}-${cell.y}`}
                             cell={cell}
-                            onClick={onClick}
+                            onLeftClick={onLeftClick}
                             onRightClick={onRightClick}
                         />
                     ))}
