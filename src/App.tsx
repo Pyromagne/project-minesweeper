@@ -1,22 +1,29 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Board from './game/components/Board';
 import type { t_cell } from './game/minesweeper';
-import { bombCount, boardSize } from './game/minesweeper';
 import useGameEngine from './hooks/useGameEngine';
+import { useStopwatch } from './hooks/useStopWatch';
 import { revealCell } from './game/revealCell';
+import { pad } from './game/minesweeper';
+import { difficultiesName } from './game/difficulties';
+import { useStorage } from './hooks/useStorage';
 
 const App = () => {
-  const { board, setBoard, gameOver, setGameOver, gameWon, setGameWon } = useGameEngine();
+  const { board, setBoard, gameOver, setGameOver, gameWon, setGameWon, gameBoard, bombCount, setDifficulty } = useGameEngine();
+  const { hours, minutes, seconds, milliseconds, start, pause, reset } = useStopwatch();
+  const { name, setName } = useStorage();
+  const [openMenuOverlay, setOpenMenuOverlay] = useState<boolean>(false);
 
   useEffect(() => {
     resetGame();
-  }, []);
+  }, [gameBoard]);
 
   const resetGame = () => {
+    reset();
     const newBoard: t_cell[][] = [];
-    for (let y = 0; y < boardSize.length; y++) {
+    for (let y = 0; y < gameBoard.height; y++) {
       const row: t_cell[] = [];
-      for (let x = 0; x < boardSize.width; x++) {
+      for (let x = 0; x < gameBoard.width; x++) {
         row.push({
           x,
           y,
@@ -31,8 +38,8 @@ const App = () => {
 
     let bombsPlaced = 0;
     while (bombsPlaced < bombCount) {
-      const x = Math.floor(Math.random() * boardSize.width);
-      const y = Math.floor(Math.random() * boardSize.length);
+      const x = Math.floor(Math.random() * gameBoard.width);
+      const y = Math.floor(Math.random() * gameBoard.height);
 
       if (!newBoard[y][x].isBomb) {
         newBoard[y][x].isBomb = true;
@@ -40,8 +47,8 @@ const App = () => {
       }
     }
 
-    for (let y = 0; y < boardSize.length; y++) {
-      for (let x = 0; x < boardSize.width; x++) {
+    for (let y = 0; y < gameBoard.height; y++) {
+      for (let x = 0; x < gameBoard.width; x++) {
         if (!newBoard[y][x].isBomb) {
           let count = 0;
           for (let dy = -1; dy <= 1; dy++) {
@@ -50,9 +57,9 @@ const App = () => {
               const ny = y + dy;
               if (
                 nx >= 0 &&
-                nx < boardSize.width &&
+                nx < gameBoard.width &&
                 ny >= 0 &&
-                ny < boardSize.length &&
+                ny < gameBoard.height &&
                 newBoard[ny][nx].isBomb
               ) {
                 count++;
@@ -70,15 +77,20 @@ const App = () => {
   };
 
   const handleLeftClick = (x: number, y: number) => {
+    if (seconds === 0) {
+      start();
+    }
     if (gameOver || gameWon) return;
 
     const updatedBoard = board.map(row => row.map(cell => ({ ...cell })));
-    const result = revealCell(updatedBoard, x, y);
+    const result = revealCell(updatedBoard, x, y, gameBoard);
 
     setBoard(result.board);
 
     if (result.gameOver) {
       setGameOver(true);
+      setOpenMenuOverlay(true);
+      pause();
     } else {
       checkWin(result.board);
     }
@@ -103,25 +115,64 @@ const App = () => {
     if (hasWon) {
       setGameWon(true);
       setBoard(board.map(row => row.map(cell => ({ ...cell, isRevealed: true }))));
+      pause();
     }
   };
 
   return (
-    <main className="p-4 flex flex-col items-center gap-4">
-      <h1 className="text-2xl font-bold">Minesweeper</h1>
+    <div className="flex min-h-svh azeret-mono background-default">
+      <aside className='w-1/5 h-svh flex flex-col items-center py-2 pl-2'>
+        <h1 className="text-2xl font-bold">Project Minesweeper</h1>
+        <div>
+          {difficultiesName.map((diff, index) => {
+            return <button key={index} onClick={() => setDifficulty(diff)} className={`m-1 p-2 rounded ${gameBoard.name === diff ? 'bg-amber-400' : ''}`}>{diff}</button>
+          })}
+        </div>
 
-      <Board board={board} onLeftClick={handleLeftClick} onRightClick={handleRightClick} />
+        <p className='mt-auto azeret-mono w-full'>Created by Pyromagne</p>
+      </aside>
 
-      {gameOver && <div className="text-red-600 font-semibold">Game Over 💥</div>}
-      {gameWon && <div className="text-green-600 font-semibold">You Win! 🎉</div>}
+      <main className='w-3/5 h-svh relative flex flex-col items-center'>
+        <p className='azeret-mono text-center mt-4 text-2xl'>{`${pad(hours)}:${pad(minutes)}:${pad(seconds)}:${pad(milliseconds)}`}</p>
 
-      <button
-        className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        onClick={resetGame}
-      >
-        Restart
-      </button>
-    </main>
+        <div className='mt-6'>
+          <Board board={board} onLeftClick={handleLeftClick} onRightClick={handleRightClick} />
+        </div>
+
+        {/* <div className={`absolute w-full h-full flex flex-col items-center justify-center backdrop-blur-sm ${openMenuOverlay ? 'block' : 'hidden'}`}>
+          {gameOver && <div className="text-red-600 font-semibold text-4xl tracking-wider background-default w-full text-center py-10">Game Over</div>}
+          {gameWon && <div className="text-green-600 font-semibold">You Win!</div>}
+        </div> */}
+
+        <div className='absolute bottom-0 right-0 mb-2 mr-2'>
+          <input type="text"
+            className='w-fit outline-none text-right'
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+      </main>
+
+      <aside className='w-1/5 h-svh py-2 flex flex-col'>
+        <p>Global Scoreboard</p>
+        <p>Local ScoreBoard</p>
+
+        <div className='mt-auto mr-2'>
+          <button
+            className="mt-2 px-4 py-2 bg-amber-400 rounded w-full"
+            onClick={pause}
+          >
+            Pause
+          </button>
+          <button
+            className="mt-2 px-4 py-2 bg-amber-400 rounded  w-full"
+            onClick={resetGame}
+          >
+            {gameOver ? 'Retry' : 'Restart'}
+          </button>
+        </div>
+      </aside>
+    </div>
   );
 };
 

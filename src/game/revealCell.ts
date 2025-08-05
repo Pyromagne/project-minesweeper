@@ -1,12 +1,18 @@
-import type { t_cell } from "./minesweeper";
-import { boardSize } from "./minesweeper";
+import type { t_cell, board } from "./minesweeper";
 
 type RevealResult = {
     board: t_cell[][];
     gameOver: boolean;
 };
 
-export const revealCell = ( board: t_cell[][], x: number, y: number ): RevealResult => {
+/**
+ * Logic for revealing cells recursively
+ * @param board 
+ * @param x 
+ * @param y 
+ * @returns 
+ */
+export const revealCell = ( board: t_cell[][], x: number, y: number, boardSize: board ): RevealResult => {
     let newBoard = structuredClone(board);
     const cell = newBoard[y][x];
 
@@ -32,10 +38,10 @@ export const revealCell = ( board: t_cell[][], x: number, y: number ): RevealRes
                     nx >= 0 &&
                     nx < boardSize.width &&
                     ny >= 0 &&
-                    ny < boardSize.length
+                    ny < boardSize.height
                 ) {
                     if (!newBoard[ny][nx].isRevealed && !newBoard[ny][nx].isBomb) {
-                        const result = revealCell(newBoard, nx, ny);
+                        const result = revealCell(newBoard, nx, ny, boardSize);
                         newBoard = result.board;
                         gameOver = gameOver || result.gameOver;
                     }
