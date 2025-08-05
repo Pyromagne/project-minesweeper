@@ -16,7 +16,10 @@ const Cell = ({ cell, onLeftClick, onRightClick }: CellProps) => {
 
     return (
         <div
-            className={`w-10 h-10 border flex items-center justify-center text-xs cursor-pointer select-none ${isRevealed ? 'bg-gray-200' : 'bg-gray-400'
+            className={`azeret-mono w-8 h-8 m-[1px] rounded-xl flex items-center justify-center text-xs cursor-pointer select-none
+                ${isRevealed
+                    ? 'bg-gray-200' 
+                    : 'bg-gray-400'
                 }`}
             onClick={() => onLeftClick(x, y)}
             onContextMenu={(e) => {
