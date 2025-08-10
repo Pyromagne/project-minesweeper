@@ -20,14 +20,6 @@ export type board = {
     height: number;
 }
 
-export function getTimestamp(time: t_timestamp): string {
-    const { hours, minutes, seconds, milliseconds } = time;
-    const pad = (num: number, size = 2) => num.toString().padStart(size, '0');
-    const padMs = (num: number) => num.toString().padStart(3, '0');
-
-    return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}.${padMs(milliseconds)}`;
-}
-
 export const icon = {
     flag: '🚩',
     bomb: '💣'

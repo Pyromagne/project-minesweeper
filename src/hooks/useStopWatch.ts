@@ -5,6 +5,7 @@ interface Stopwatch extends t_timestamp {
   start: () => void;
   pause: () => void;
   reset: () => void;
+  time: t_timestamp;
 }
 
 export const useStopwatch = (): Stopwatch => {
@@ -73,5 +74,6 @@ export const useStopwatch = (): Stopwatch => {
     start,
     pause,
     reset,
+    time
   };
 };

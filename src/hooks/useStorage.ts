@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 
 type ScoreEntry = {
+    name: string;
     difficulty: string;
-    time: number; // milliseconds
-    date: string; // ISO string
+    timestamp: string;
+    date: string;
 };
 
 interface UseStorageResult {
@@ -21,7 +22,6 @@ export function useStorage(): UseStorageResult {
     const [name, setNameState] = useState<string>("Unknown Player");
     const [scores, setScores] = useState<ScoreEntry[]>([]);
 
-    // Load from localStorage on first mount
     useEffect(() => {
         const storedName = localStorage.getItem(NAME_KEY);
         const storedScores = localStorage.getItem(SCORES_KEY);
