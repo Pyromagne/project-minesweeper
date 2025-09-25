@@ -20,9 +20,11 @@ export type board = {
     height: number;
 }
 
+import { FaBomb, FaFlag } from "react-icons/fa6";
+
 export const icon = {
-    flag: '🚩',
-    bomb: '💣'
+    flag: FaFlag,
+    bomb: FaBomb
 }
 
 export function pad(n: number, size = 2): string {

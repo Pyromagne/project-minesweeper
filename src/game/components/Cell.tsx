@@ -1,3 +1,4 @@
+import type { IconType } from "react-icons";
 import type { t_cell } from "../minesweeper";
 import { icon } from "../minesweeper";
 
@@ -10,16 +11,22 @@ type CellProps = {
 const Cell = ({ cell, onLeftClick, onRightClick }: CellProps) => {
     const { x, y, isRevealed, isBomb, adjacentBombs, isFlagged } = cell;
 
-    let display = '';
-    if (isFlagged) display = icon.flag;
-    else if (isRevealed) display = isBomb ? icon.bomb : adjacentBombs ? adjacentBombs.toString() : '';
+    let Display: IconType | undefined = undefined;
+    let aBombs: string = '';
+    if (isFlagged) Display = icon.flag;
+    else if (isRevealed) {
+        if (isBomb) {
+            Display =  icon.bomb;
+        }
+        aBombs = adjacentBombs ? adjacentBombs.toString() : '';
+    }
 
     return (
         <div
             className={`azeret-mono w-6 h-6 m-[1px] rounded-lg flex items-center justify-center text-xs cursor-pointer select-none
                 ${isRevealed
                     ? 'bg-gray-200' 
-                    : 'bg-gray-400'
+                    : 'bg-gray-500'
                 }`}
             onClick={() => onLeftClick(x, y)}
             onContextMenu={(e) => {
@@ -27,7 +34,8 @@ const Cell = ({ cell, onLeftClick, onRightClick }: CellProps) => {
                 onRightClick(x, y);
             }}
         >
-            {display}
+            {Display ? <Display className={isFlagged ? "text-green-400" : "text-red-400"}/> : aBombs}
+            
         </div>
     );
 };

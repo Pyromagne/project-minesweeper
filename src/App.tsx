@@ -7,12 +7,12 @@ import { revealCell } from './game/revealCell';
 import { pad } from './game/minesweeper';
 import { difficultiesName } from './game/difficulties';
 import { useStorage } from './hooks/useStorage';
-import timestampToString from './game/utils/TimestampToString';
+import timestampToString from './game/utils/timestampToString';
 import timestampToMilliseconds from './game/utils/timestampToMilliseconds';
 
 const App = () => {
   const { board, setBoard, gameOver, setGameOver, gameWon, setGameWon, gameBoard, bombCount, setDifficulty } = useGameEngine();
-  const { hours, minutes, seconds, milliseconds, start, pause, reset, time } = useStopwatch();
+  const { hours, minutes, seconds, milliseconds, start, pause, reset, time, isPause } = useStopwatch();
   const { name, setName, scores, addScore } = useStorage();
 
   useEffect(() => {
@@ -122,11 +122,12 @@ const App = () => {
   };
 
   return (
-    <div className="flex min-h-svh azeret-mono background-default">
+    <div className="flex min-h-svh azeret-mono background-default" onContextMenu={(e) => e.preventDefault()}>
       <aside className='w-1/5 h-svh flex flex-col items-center py-2 pl-2'>
         <h1 className="text-xl font-bold azeret-mono">
           <span className='text-amber-400 bg-black px-2'>PROJECT</span>
-          <span className='text-red-400 bg-white pl-2'>[mine]</span><span className='text-green-400 bg-white pr-2'>sweeper</span></h1>
+          <span className='text-red-400 bg-white pl-2'>[mine]</span><span className='text-green-400 bg-white pr-2'>sweeper</span>
+        </h1>
         <div>
           {difficultiesName.map((diff, index) => {
             return <button key={index} onClick={() => setDifficulty(diff)} className={`m-1 p-2 rounded text-sm ${gameBoard.name === diff ? 'bg-amber-400' : 'hover:bg-amber-500 cursor-pointer'}`}>{diff}</button>
@@ -139,7 +140,7 @@ const App = () => {
       <main className='w-3/5 h-svh relative flex flex-col items-center'>
         <p className='azeret-mono text-center mt-4 text-2xl'>{`${pad(hours)}:${pad(minutes)}:${pad(seconds)}:${pad(milliseconds)}`}</p>
 
-        <div className='mt-6'>
+        <div className='mt-6 drop-shadow-2xl'>
           <Board board={board} onLeftClick={handleLeftClick} onRightClick={handleRightClick} />
         </div>
 
@@ -177,8 +178,8 @@ const App = () => {
           {gameOver && <p className="azeret-mono text-red-400 font-semibold text-4xl tracking-wider w-full text-center">GAME OVER</p>}
           {gameWon && <p className="azeret-mono text-green-400 font-semibold text-4xl tracking-wider w-full text-center">YOU WIN</p>}
           <button
-            className="mt-2 px-4 py-2 bg-amber-400 rounded w-full hover:bg-amber-500 cursor-pointer"
-            onClick={(pause)}
+            className={(gameOver || isPause ? 'bg-gray-400 cursor-not-allowed' : 'bg-amber-400 hover:bg-amber-500 cursor-pointer') + ` mt-2 px-4 py-2  rounded w-full`}
+            onClick={pause}
           >
             Pause
           </button>

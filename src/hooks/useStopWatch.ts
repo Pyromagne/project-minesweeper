@@ -6,9 +6,11 @@ interface Stopwatch extends t_timestamp {
   pause: () => void;
   reset: () => void;
   time: t_timestamp;
+  isPause: boolean;
 }
 
 export const useStopwatch = (): Stopwatch => {
+  const [isPause, setIsPause] = useState<boolean>(false);
   const [time, setTime] = useState<t_timestamp>({
     hours: 0,
     minutes: 0,
@@ -36,6 +38,7 @@ export const useStopwatch = (): Stopwatch => {
   };
 
   const start = () => {
+    setIsPause(false);
     if (intervalRef.current !== null) return;
 
     startTimeRef.current = Date.now() - elapsedRef.current;
@@ -51,6 +54,7 @@ export const useStopwatch = (): Stopwatch => {
   };
 
   const pause = () => {
+    setIsPause(true);
     if (intervalRef.current !== null) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
@@ -74,6 +78,7 @@ export const useStopwatch = (): Stopwatch => {
     start,
     pause,
     reset,
-    time
-  };
+    time,
+    isPause
+  }; 
 };
